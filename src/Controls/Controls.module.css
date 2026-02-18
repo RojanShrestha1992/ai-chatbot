@@ -1,0 +1,37 @@
+.Controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  max-width: 100%;
+  padding: 8px;
+  overflow: hidden; /* changed from overflow-x */
+}
+
+.TextAreaContainer {
+  flex-grow: 1;
+  padding: 8px 16px;
+  line-height: 1;
+  border-radius: 16px;
+  background: #f3f3f3;
+  max-width: 100%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+}
+
+.TextArea {
+  width: 100%;
+  border: none;
+  outline: none;
+  resize: none;
+  color: #0d0d0d;
+  background: transparent;
+  box-sizing: border-box;
+  overflow: hidden;   /* prevents vertical scroll */
+  font-family: inherit;
+  font-size: inherit;
+  height: auto;
+  max-height: 120px;  /* optional: limit growth */
+}
