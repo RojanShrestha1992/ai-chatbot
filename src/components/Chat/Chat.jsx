@@ -9,13 +9,11 @@ const WELCOME_MESSAGE = {
 const Chat = ({ messages }) => {
   return (
     <div className={styles.Chat}>
-      {[WELCOME_MESSAGE, ...messages].map(({ role, content }, index) => {
+      {[WELCOME_MESSAGE, ...messages].map(({ id, role, content }, index) => {
         return (
-          <>
-            <div className={styles.Message} key={index} data-role={role}>
-              {content}
-            </div>
-          </>
+          <div className={styles.Message} key={id ?? index} data-role={role}>
+            {content}
+          </div>
         );
       })}
     </div>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import styles from "./App.module.css";
 import Chat from "./components/Chat/Chat";
 import Controls from "./Controls/Controls";
@@ -6,20 +6,48 @@ import { Assistant } from "./assistants/googleai";
 
 const App = () => {
   const [messages, setMessages] = useState([]);
-  const assistant = new Assistant();
+  const assistantRef = useRef(null);
+
+  function createMessageId() {
+    if (globalThis.crypto?.randomUUID) {
+      return globalThis.crypto.randomUUID();
+    }
+
+    return `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+  }
+
+  if (assistantRef.current == null) {
+    assistantRef.current = new Assistant();
+  }
 
   function addMessage(message) {
     setMessages((prev) => [...prev, message]);
   }
 
+  function updateMessageContent(id, content) {
+    setMessages((prev) =>
+      prev.map((message) =>
+        message.id === id ? { ...message, content } : message
+      )
+    );
+  }
+
   async function handleContentSend(content) {
     // alert(content)
-      addMessage({ role: "user", content });
+      addMessage({ id: createMessageId(), role: "user", content });
+
+    const assistantMessageId = createMessageId();
+    addMessage({ id: assistantMessageId, role: "assistant", content: "" });
+
     try {
-      const result = await assistant.chat(content);
-      addMessage({ role: "assistant", content: result });
+      await assistantRef.current.chatStream(content, (partialText) => {
+        updateMessageContent(assistantMessageId, partialText);
+      });
     } catch (err) {
-      addMessage({ role: "system", content: "Sorry, something went wrong. Please try again." });
+      updateMessageContent(
+        assistantMessageId,
+        `Sorry, something went wrong: ${err?.message || "Please try again."}`
+      );
       console.log(err)
     }
   }
